@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-replica
+  labels:
+    app: redis
+    role: replica
+spec:
+  selector:
+    matchLabels:
+      app: redis
+      role: replica
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: redis
+        role: replica
+    spec:
+      containers:
+        - name: redis
+          image: redis:latest
+          ports:
+            - containerPort: 6379
+          command: ["redis-server"]
+          args: ["--replicaof", "redis-master", "6379"]
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-replicas
+spec:
+  ports:
+    - port: 6379
+      targetPort: 6379
+  selector:
+    app: redis
+    role: replica
+

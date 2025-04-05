@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mynodeapp
+  labels:
+    app: mynodeapp
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mynodeapp
+  template:
+    metadata:
+      labels:
+        app: mynodeapp
+    spec:
+      containers:
+      - name: mynodeapp
+        image: ryusid/server-image:latest 
+        ports:
+          - name: http
+            containerPort: 5400
+        env:
+          - name: REDIS_URL
+            value: redis://redis-master:6379
+          - name: REDIS_REPLICAS_URL
+            value: redis://redis-replicas:6379
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
+           
+        
+        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mynodeapp-service
+  labels:
+    app: mynodeapp
+    release: prometheus
+spec:
+  selector:
+    app: mynodeapp  
+  ports:
+    - protocol: TCP
+      name: http
+      port: 8000
+      targetPort: http
+      nodePort: 30001
+  type: LoadBalancer  
+
+
