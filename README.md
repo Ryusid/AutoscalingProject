@@ -1,4 +1,4 @@
-# Kubernetes Project - Automated Deployment with Minikube, Kubernetes, Prometheus, and Grafana
+# Autoscalign project and IaC:
 
 This project uses **Minikube**, **Kubernetes**, **Prometheus**, **Grafana**, and other tools to deploy a backend and frontend application with monitoring and autoscaling.
 
