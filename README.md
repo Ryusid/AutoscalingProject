@@ -83,7 +83,7 @@ Replace `<user>` with your actual username.
  Ensure you execute the script with the following command:
 
 ```bash
-./automation-script.sh
+sudo chmod +x automation-script.sh && ./automation-script.sh
 ```
 
 3. **Accessing the Services**:
