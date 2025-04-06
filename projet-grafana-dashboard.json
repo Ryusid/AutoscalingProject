@@ -1,4 +1,7 @@
 {
+  "dashboard":{
+  "id": null,
+  "uid": null,
   "annotations": {
     "list": [
       {
@@ -18,7 +21,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 29,
   "links": [],
   "panels": [
     {
@@ -304,7 +306,7 @@
   ],
   "preload": false,
   "schemaVersion": 41,
-  "tags": [],
+  "tags": [ "templated" ],
   "templating": {
     "list": []
   },
@@ -315,6 +317,10 @@
   "timepicker": {},
   "timezone": "browser",
   "title": "Projet-autoscale",
-  "uid": "aei02ah9qt8u8c",
-  "version": 8
+  "version": 8,
+  "refresh": "25s"
+},
+"folderUid": null,
+"message": "New dashboard",
+"overwrite": true
 }
