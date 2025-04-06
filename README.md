@@ -2,6 +2,9 @@
 
 This project uses **Minikube**, **Kubernetes**, **Prometheus**, **Grafana**, and other tools to deploy a backend and frontend application with monitoring and autoscaling.
 
+The end result is represented by the following picture : 
+![architecture](Architecture.png)
+
 ## Prerequisites
 
 Before running the script, ensure the following are installed and configured:
