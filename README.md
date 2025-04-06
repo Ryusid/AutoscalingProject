@@ -121,6 +121,7 @@ You can monitor these metrics in real-time using Grafana.
 
 - The script assumes **kubectl**, **Minikube** and **Docker** are already installed and accessible.
 - The script also assumes you have the necessary permissions to install Helm charts and deploy resources in Kubernetes.
+- A `cleanCluster.sh` script is provided to clean up the cluster if needed.
 
 ---
 
