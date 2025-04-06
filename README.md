@@ -6,10 +6,40 @@ This project uses **Minikube**, **Kubernetes**, **Prometheus**, **Grafana**, and
 
 Before running the script, ensure the following are installed and configured:
 
-1. **Minikube**: Used to create a local Kubernetes cluster.
+1. **Minikube**: Used to create a local Kubernetes cluster.\
+   - **https://kubernetes.io/fr/docs/tasks/tools/install-minikube/**
+     
 2. **Kubernetes (kubectl)**: Kubernetes command-line tool to manage your cluster.
-3. **Helm**: Used to install the Prometheus and Grafana stack from the Helm repository.
 
+   - **https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/**
+
+3. **Helm**: Used to install the Prometheus and Grafana stack from the Helm repository.
+    - the installation of helm is included in the shell script, but necessary permissions are required so if needed it can be deleted from the script and downloaded manually
+
+       - https://helm.sh/docs/intro/install/
+4. **localtunnel**: it may be necessary to install localtunnel if you choose to try the public version
+    - **https://github.com/localtunnel/localtunnel**
+5. **Docker**: to run minikube with the docker driver:
+    - **https://docs.docker.com/engine/install/ubuntu/**
+---
+#### Note:
+a modification can be made to the shell script line 23:
+```bash
+kubectl apply -f ReactDepPublic.yml
+```
+to instead deploy a public version of the react app, that contacts the backend through a localtunnel **https://21416339-backend.loca.lt** which requires exposing the backend using :
+```bash
+lt -l 192.168.49.2 -p 30001 -s 21416339-backend
+```
+and exposing the frontend, using:
+```bash
+lt -l 192.168.49.2 -p 30002 -s 21416339-frontend
+```
+so that it is accessible through **https://21416339-frontend.loca.lt**
+
+- Using this method is a bit complicated seeing as how lcoaltunnel first shows a friendly page that requires a password which is the public ip address of the machine, so manual visits to bypass the pages are required for the app to work.
+
+---
 ### User Permissions
 
 - If you're using **Minikube** with the Docker driver, make sure your user is part of the `docker` group. This can be done using the command:
@@ -84,13 +114,9 @@ After importing the dashboard JSON file (`projet-grafana-dashboard.json`), the d
 
 You can monitor these metrics in real-time using Grafana.
 
-6. **Modifications**:
+6. **Important Notes**:
 
-- If Minikube is already running or you're using a different driver, you might need to modify the script accordingly. For example, remove the `minikube start` command if Minikube is already running.
-
-7. **Important Notes**:
-
-- The script assumes **kubectl**, **Minikube**, and **Helm** are already installed and accessible.
+- The script assumes **kubectl**, **Minikube** and **Docker** are already installed and accessible.
 - The script also assumes you have the necessary permissions to install Helm charts and deploy resources in Kubernetes.
 
 ---
