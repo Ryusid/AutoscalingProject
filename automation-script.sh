@@ -79,9 +79,10 @@ curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" \
 
 echo "📊 Dashboard accesible at http://192.168.49.2:30000/d/aei3q9u5adj40a"
 
-kubectl port-forward -n monitoring svc/prometheus-kube-prometheus-prometheus 9090:9090
 
 echo "Prometheus UI accessible at http://localhost:9090"
+echo " "
+kubectl port-forward -n monitoring svc/prometheus-kube-prometheus-prometheus 9090:9090
 
 echo "🚀 Minikube setup complete!"
 
