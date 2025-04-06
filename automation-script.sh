@@ -3,9 +3,7 @@
 set -e
 
 echo "🚀 Starting Minikube..."
-
-sudo usermod -aG docker $USER && newgrp docker
-minikube start 
+minikube start --driver=docker
 
 echo "📊 Enabling metrics-server..."
 minikube addons enable metrics-server
@@ -24,11 +22,10 @@ kubectl apply -f ReactDep.yml
 kubectl rollout status deployment/react-app
 
 echo "⚖️ Setting up autoscaling..."
-kubectl autoscale deployment redis-replica --cpu-percent=50 --min=2 --max=5
-kubectl autoscale deployment mynodeapp --cpu-percent=50 --min=2 --max=5
+kubectl autoscale deployment redis-replica --cpu-percent=25 --min=2 --max=5
+kubectl autoscale deployment mynodeapp --cpu-percent=30 --min=2 --max=5
 
 echo "Downloading helm..."
-
 
 sudo curl -fsSL https://get.helm.sh/helm-v3.9.4-linux-amd64.tar.gz -o helm-v3.9.4-linux-amd64.tar.gz
 sudo tar -zxvf helm-v3.9.4-linux-amd64.tar.gz
@@ -43,7 +40,7 @@ echo "🔍 Creating monitoring namespace..."
 kubectl create namespace monitoring || echo "Namespace already exists"
 
 echo "📈 Installing kube-prometheus-stack..."
-helm install prometheus prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace
+helm install prometheus prometheus-community/kube-prometheus-stack --namespace monitoring
 
 echo "🛠️ Waiting for Prometheus and Grafana pods to be ready..."
 kubectl rollout status deployment/prometheus-grafana -n monitoring
@@ -65,13 +62,29 @@ kubectl patch svc prometheus-grafana -n monitoring --type='merge' -p '{
     }]
   }
 }'
-
 echo "Grafana UI accessible at http://192.168.49.2:30000"
+
+echo "🌐 Exposing Prometheus on NodePort (30090)..."
+kubectl patch svc prometheus-kube-prometheus-prometheus -n monitoring --type='merge' -p '{
+  "spec": {
+    "type": "NodePort",
+    "ports": [{
+      "port": 90,
+      "targetPort": 9090,
+      "protocol": "TCP",
+      "nodePort": 30090
+    }]
+  }
+}'
+echo "Prometheus UI accessible at http://192.168.49.2:30090"
+
 
 echo "🔑 opening the react app in the browser..."
 minikube service react-app-service 
 echo "🔑 opening grafana in browser..."
 minikube service prometheus-grafana -n monitoring
+echo "🔑 opening prometheus in browser..."
+minikube service prometheus-kube-prometheus-prometheus -n monitoring
 
 echo " Importing Grafana dashboard..."
 
