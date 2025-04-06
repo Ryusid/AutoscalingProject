@@ -68,19 +68,18 @@ kubectl patch svc prometheus-grafana -n monitoring --type='merge' -p '{
 
 echo "Grafana UI accessible at http://192.168.49.2:30000"
 
-echo " Importing Grafana dashboard..."
-
-curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" \
--d @projet-grafana-dashboard.json \
-'http://admin:prom-operator@192.168.49.2:30000/api/dashboards/import' 
-
-
 echo "🔑 opening the react app in the browser..."
 minikube service react-app-service 
 echo "🔑 opening grafana in browser..."
 minikube service prometheus-grafana -n monitoring
 
-                                                                                                                        
+echo " Importing Grafana dashboard..."
 
-echo "✅ All done!"
+curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" \
+-d @projet-grafana-dashboard.json \
+'http://admin:prom-operator@192.168.49.2:30000/api/dashboards/import'
+
+echo "📊 Dashboard accesible at http://192.168.49.2:30000/d/aei3q9u5adj40a"
+
+echo "🚀 Minikube setup complete!"
 
