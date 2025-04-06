@@ -122,6 +122,7 @@ You can monitor these metrics in real-time using Grafana.
 - The script assumes **kubectl**, **Minikube** and **Docker** are already installed and accessible.
 - The script also assumes you have the necessary permissions to install Helm charts and deploy resources in Kubernetes.
 - A `cleanCluster.sh` script is provided to clean up the cluster if needed.
+- Running the automation script on a VM or machine without graphical access (headless) will cause the script to fail at the end when attempting to open the frontend web page in a browser. The commands to open the web page are designed for machines with a GUI, and they will not work in a headless environment.
 
 ---
 
