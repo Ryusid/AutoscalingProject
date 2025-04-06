@@ -66,8 +66,12 @@ kubectl patch svc prometheus-grafana -n monitoring --type='merge' -p '{
 
 echo "Grafana UI accessible at http://192.168.49.2:30000"
 
-
+echo "🔑 opening the react app in the browser..."
+minikube service react-app-service 
+echo "🔑 opening grafana in browser..."
 minikube service prometheus-grafana -n monitoring
+
+
 
 echo "✅ All done!"
 
