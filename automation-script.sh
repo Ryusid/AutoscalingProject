@@ -64,27 +64,10 @@ kubectl patch svc prometheus-grafana -n monitoring --type='merge' -p '{
 }'
 echo "Grafana UI accessible at http://192.168.49.2:30000"
 
-echo "🌐 Exposing Prometheus on NodePort (30090)..."
-kubectl patch svc prometheus-kube-prometheus-prometheus -n monitoring --type='merge' -p '{
-  "spec": {
-    "type": "NodePort",
-    "ports": [{
-      "port": 90,
-      "targetPort": 9090,
-      "protocol": "TCP",
-      "nodePort": 30090
-    }]
-  }
-}'
-echo "Prometheus UI accessible at http://192.168.49.2:30090"
-
-
 echo "🔑 opening the react app in the browser..."
 minikube service react-app-service 
 echo "🔑 opening grafana in browser..."
 minikube service prometheus-grafana -n monitoring
-echo "🔑 opening prometheus in browser..."
-minikube service prometheus-kube-prometheus-prometheus -n monitoring
 
 echo " Importing Grafana dashboard..."
 
