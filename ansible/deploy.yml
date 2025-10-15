@@ -1,0 +1,9 @@
+- name: deploy AutoscalingProject on Minikube
+  hosts: local
+  become: yes
+  vars_files:
+      - group_vars/all.yml
+  roles:
+    - role: deploy
+      become: false
+    #- role: monitoring

@@ -1,0 +1,30 @@
+---
+- name: Apply Redis master
+  command: kubectl apply -f Redis-master.yml
+  args:
+    chdir: "{{ playbook_dir }}/../"
+
+- name: Apply Redis replicas
+  command: kubectl apply -f Redis-replicas.yml
+  args:
+    chdir: "{{ playbook_dir }}/../"
+
+- name: Apply backend deployment
+  command: kubectl apply -f BackendDep.yml
+  args:
+    chdir: "{{ playbook_dir }}/../"
+
+- name: Apply frontend deployment
+  command: kubectl apply -f ReactDep.yml
+  args:
+    chdir: "{{ playbook_dir }}/../"
+
+- name: Configure autoscaling
+  command: >
+    kubectl autoscale deployment {{ item.name }}
+    --cpu-percent={{ item.cpu }}
+    --min={{ item.min }}
+    --max={{ item.max }}
+  loop:
+    - { name: "redis-replica", cpu: 25, min: 2, max: 5 }
+    - { name: "mynodeapp", cpu: 30, min: 2, max: 5 }

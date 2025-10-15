@@ -1,0 +1,43 @@
+---
+- name: Download and install Helm
+  shell: |
+    curl -fsSL https://get.helm.sh/helm-v3.9.4-linux-amd64.tar.gz -o helm.tar.gz
+    tar -zxvf helm.tar.gz
+    mv linux-amd64/helm /usr/local/bin/helm
+    rm -rf helm.tar.gz linux-amd64
+
+- name: Add Prometheus Helm repo
+  command: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+  ignore_errors: yes
+
+- name: Update Helm repos
+  command: helm repo update
+
+- name: Create monitoring namespace
+  become: false
+  command: kubectl create namespace monitoring
+  ignore_errors: yes
+
+- name: Install Prometheus stack
+  command: helm install prometheus prometheus-community/kube-prometheus-stack --namespace monitoring
+
+- name: Apply ServiceMonitor
+  become: false
+  command: kubectl apply -f Service-monitoring.yml
+  args:
+    chdir: "{{ playbook_dir }}/../"
+
+- name: Expose Grafana via NodePort
+  become: false
+  shell: |
+    kubectl patch svc prometheus-grafana -n monitoring --type='merge' -p '{
+      "spec": {
+        "type": "NodePort",
+        "ports": [{
+          "port": 80,
+          "targetPort": 3000,
+          "protocol": "TCP",
+          "nodePort": 30000
+        }]
+      }
+    }'
