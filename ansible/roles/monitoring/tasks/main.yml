@@ -1,11 +1,4 @@
 ---
-- name: Download and install Helm
-  shell: |
-    curl -fsSL https://get.helm.sh/helm-v3.9.4-linux-amd64.tar.gz -o helm.tar.gz
-    tar -zxvf helm.tar.gz
-    mv linux-amd64/helm /usr/local/bin/helm
-    rm -rf helm.tar.gz linux-amd64
-
 - name: Add Prometheus Helm repo
   command: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
   ignore_errors: yes

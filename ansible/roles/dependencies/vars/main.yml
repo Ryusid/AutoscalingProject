@@ -1,0 +1,4 @@
+---
+helm_version: "v3.15.4"
+minikube_version: "latest"
+kubectl_version: "latest"

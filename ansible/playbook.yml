@@ -5,6 +5,8 @@
   vars_files:
       - group_vars/all.yml
   roles:
+    - role: dependencies
     - role: minikube
     - role: deploy
+      become: false
     #- role: monitoring

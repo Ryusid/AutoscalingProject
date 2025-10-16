@@ -12,6 +12,7 @@ spec:
       labels:
         app: react-app
     spec:
+      hostNetwork: true
       containers:
       - name: react-app
         image: ryusid/reactapp-image:latest
@@ -31,5 +32,5 @@ spec:
     port: 8080
     targetPort: 80
     nodePort: 30002
-  type: LoadBalancer 
+  type: NodePort
 

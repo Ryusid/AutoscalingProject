@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: mynodeapp
-        image: ryusid/server-image:latest 
+        image: ryusid/server-image:latest
         ports:
           - name: http
             containerPort: 5400
@@ -32,9 +32,6 @@ spec:
           limits:
             cpu: "500m"
             memory: "256Mi"
-           
-        
-        
 ---
 apiVersion: v1
 kind: Service
@@ -45,13 +42,13 @@ metadata:
     release: prometheus
 spec:
   selector:
-    app: mynodeapp  
+    app: mynodeapp
   ports:
     - protocol: TCP
       name: http
       port: 5400
       targetPort: http
       nodePort: 30001
-  type: LoadBalancer  
+  type: NodePort
 
 

@@ -48,10 +48,8 @@ so that it is accessible through **https://21416339-frontend.loca.lt**
 - If you're using **Minikube** with the Docker driver, make sure your user is part of the `docker` group. This can be done using the command:
 
 ```bash
-sudo usermod -ag docker <user> && newgrp docker
+sudo usermod -ag docker $USER && newgrp docker
 ```
-
-Replace `<user>` with your actual username.
 
 - Ensure you have the required permissions to install packages if needed (Helm will be downloaded in the script, so you must be able to execute the necessary package installations).
 

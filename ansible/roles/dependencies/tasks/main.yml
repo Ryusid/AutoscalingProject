@@ -1,0 +1,97 @@
+---
+- name: Update system packages
+  become: true
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: Installing utilities
+  become: true
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - wget
+      - git
+      - conntrack
+      - software-properties-common
+    state: present
+    update_cache: yes
+
+- name: Check if docker is installed
+  command: docker --version
+  register: docker_check
+  ignore_errors: yes
+
+
+- name: Install docker if not present
+  become: true
+  shell:
+    curl -fsSL https://get.docker.com | bash
+  when: docker_check.rc != 0
+
+# Kubectl installation
+- name: Check if kubectl is installed
+  command: kubectl version --client --output=yaml
+  register: kubectl_check
+  ignore_errors: yes
+
+- name: Install kubectl if not found
+  become: true
+  shell: |
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+    echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+    sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+    rm kubectl
+    rm kubectl.sha256
+  when: kubectl_check.rc != 0
+
+
+# Minikube installation
+
+- name: Check if minikube is installed
+  command: minikube version
+  register: minikube_check
+  ignore_errors: yes
+
+- name: Install minikube if not found
+  become: true
+  shell: |
+    curl -Lo minikube https://storage.googleapis.com/minikube/releases/{{ minikube_version }}/minikube-linux-amd64
+    install minikube /usr/local/bin/minikube
+    rm minikube
+  when: minikube_check.rc != 0
+
+# Helm installation
+
+- name: Check if Helm is installed
+  command: helm version
+  register: helm_check
+  ignore_errors: yes
+
+- name: ⚙️nstall Helm if not found
+  become: true
+  shell: |
+    curl -fsSL https://get.helm.sh/helm-{{ helm_version }}-linux-amd64.tar.gz -o helm.tar.gz
+    tar -zxvf helm.tar.gz
+    mv linux-amd64/helm /usr/local/bin/helm
+    rm -rf linux-amd64 helm.tar.gz
+  when: helm_check.rc != 0
+
+- name: Check docker permissions
+  become: false
+  command: docker ps
+  register: docker_perm
+  ignore_errors: yes
+
+- name: Warn if docker not accessible
+  when: docker_perm.rc != 0
+  debug:
+    msg: |
+      ⚠️ocker seems inaccessible for user {{ ansible_user }}.
+      Run:
+        sudo usermod -aG docker {{ ansible_user }}
+        newgrp docker
+      Then re-run this playbook.

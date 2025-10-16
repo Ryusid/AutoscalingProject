@@ -1,25 +1,4 @@
 ---
-- name: Ensure dependencies are installed
-  apt:
-    name:
-      - curl
-      - conntrack
-      - docker.io
-    state: present
-    update_cache: yes
-
-- name: Check if Minikube is installed
-  command: minikube version
-  register: minikube_check
-  ignore_errors: yes
-
-- name: Install Minikube if not found
-  when: minikube_check.rc != 0
-  shell: |
-    curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-    chmod +x minikube
-    sudo mv minikube /usr/local/bin/
-
 - name: Start Minikube
   become: false
   command: minikube start
@@ -29,4 +8,3 @@
 - name: Enable metrics-server addon
   become: false
   command: minikube addons enable metrics-server
-
