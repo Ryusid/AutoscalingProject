@@ -1,0 +1,8 @@
+---
+- name: Clean AutoscalingProject on Minikube
+  hosts: local
+  become: false
+  vars_files:
+      - group_vars/all.yml
+  roles:
+    - role: cleanup

@@ -1,0 +1,16 @@
+---
+- name: clean the cluster
+  become: false
+  shell: |
+    kubectl delete -f Redis-master.yml
+    kubectl delete -f Redis-replicas.yml
+    kubectl delete -f BackendDep.yml
+    kubectl delete -f ReactDep.yml
+    kubectl delete -f Service-monitoring.yml
+    helm uninstall prometheus -n monitoring
+    kubectl delete hpa mynodeapp
+    kubectl delete hpa redis-replica
+    minikube stop
+    minikube delete
+  args:
+    chdir: "{{ playbook_dir }}/../"
