@@ -24,11 +24,9 @@ The following dependencies are needed for the project, though most of them are c
     - the installation of helm is included in the shell script, but necessary permissions are required so if needed it can be deleted from the script and downloaded manually
 
        - https://helm.sh/docs/intro/install/
-4. **localtunnel**: it may be necessary to install localtunnel if you choose to try the public version
-    - **https://github.com/localtunnel/localtunnel**
-5. **Docker**: to run minikube with the docker driver:
+4. **Docker**: to run minikube with the docker driver:
     - **https://docs.docker.com/engine/install/ubuntu/**
-6. **Ansible**: to automate this full project.
+5. **Ansible**: to automate this full project.
 ---
 ### User Permissions
 
