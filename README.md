@@ -1,13 +1,17 @@
-# Autoscalign project and IaC:
+# Autoscalign project (IaC with Ansible):
 
-This project uses **Minikube**, **Kubernetes**, **Prometheus**, **Grafana**, and other tools to deploy a backend and frontend application with monitoring and autoscaling.
+This project automates the deployment of a full Kubernetes stack using **Ansible**, **Minikube**, **Helm**, **Prometheus**, and **Grafana**.
+
+It provisions and monitors a backend + frontend application with autoscaling enabled.
+The deployment is fully reproducible through Ansible roles.
+
 
 The end result is represented by the following picture : 
 ![architecture](Architecture.png)
 
 ## Prerequisites
 
-Before running the script, ensure the following are installed and configured:
+The following dependencies are needed for the project, though most of them are checked and installed with Ansible:
 
 1. **Minikube**: Used to create a local Kubernetes cluster.\
    - **https://kubernetes.io/fr/docs/tasks/tools/install-minikube/**
@@ -24,24 +28,7 @@ Before running the script, ensure the following are installed and configured:
     - **https://github.com/localtunnel/localtunnel**
 5. **Docker**: to run minikube with the docker driver:
     - **https://docs.docker.com/engine/install/ubuntu/**
----
-#### Note:
-a modification can be made to the shell script line 23:
-```bash
-kubectl apply -f ReactDepPublic.yml
-```
-to instead deploy a public version of the react app, that contacts the backend through a localtunnel **https://21416339-backend.loca.lt** which requires exposing the backend using :
-```bash
-lt -l 192.168.49.2 -p 30001 -s 21416339-backend
-```
-and exposing the frontend, using:
-```bash
-lt -l 192.168.49.2 -p 30002 -s 21416339-frontend
-```
-so that it is accessible through **https://21416339-frontend.loca.lt**
-
-- Using this method is a bit complicated seeing as how lcoaltunnel first shows a friendly page that requires a password which is the public ip address of the machine, so manual visits to bypass the pages are required for the app to work.
-
+6. **Ansible**: to automate this full project.
 ---
 ### User Permissions
 
@@ -51,11 +38,14 @@ so that it is accessible through **https://21416339-frontend.loca.lt**
 sudo usermod -ag docker $USER && newgrp docker
 ```
 
-- Ensure you have the required permissions to install packages if needed (Helm will be downloaded in the script, so you must be able to execute the necessary package installations).
+- You can choose to use Minikube by setting `--driver=none` which will run minikube directly on the machine/VM.
+
+- Ensure you have the necessary user permissions (Ansible will need to download utils that will need it).
 
 ## Files Included
 
-- `automation-script.sh`: The shell script that automates the entire deployment process.
+- `ansible/playbook.yml`: The ansible playbook that automates the entire deployment process.
+- `ansible/clean.yml`: The ansible playbook that cleans the entire thing.
 - `Redis-master.yml`, `Redis-replicas.yml`, `BackendDep.yml`, `ReactDep.yml`, `Service-monitoring.yml`: Kubernetes YAML files for the various deployments and configurations.
 - `projet-grafana-dashboard.json`: The JSON file used to import the Grafana dashboard.
 
@@ -63,13 +53,20 @@ sudo usermod -ag docker $USER && newgrp docker
 
 1. **Prepare Your Environment**:
 
- - Install **Minikube**, **kubectl**, and **Helm**.
+ - Install **Ansible**.
+	```bash
+	sudo apt install -y ansible
+	```
  - Make sure you have **Docker** installed if you plan to use the Docker driver for Minikube.
+ - Make sure your user is in the docker group: `sudo usermod -aG docker $USER && newgrp docker`
+2. **Running the deployment**:
+ You can deploy everything by running:
+```bash
+ansible-playbook -i ansible/inventory.ini ansible/playbook.yml --ask-become-pass
+```
+ This will automatically:
 
-2. **Running the Automation Script**:
-
- Once your environment is set up, you can execute the script. This will automatically:
-
+ - Ensures dependencies (Docker, kubectl, Helm, Minikube)
  - Start **Minikube** (if not already started).
  - Enable the **metrics-server**.
  - Deploy the Redis master and replicas, backend, and frontend React app.
@@ -78,22 +75,22 @@ sudo usermod -ag docker $USER && newgrp docker
  - Expose **Grafana** and **Prometheus** via `NodePort`.
  - Import a pre-configured **Grafana dashboard**.
  
- Ensure you execute the script with the following command:
+3. **Cleaning the environment**:
 
+To clean up all Kubernetes resources and delete the minikube profile: 
 ```bash
-sudo chmod +x automation-script.sh && ./automation-script.sh
+ansible-playbook -i ansible/inventory.ini ansible/clean.yml
 ```
-
-3. **Accessing the Services**:
+4. **Accessing the Services**:
 
 After running the script, the services will be exposed and you can access them via:
 
 - **Frontend React App**: Access it at `http://192.168.49.2:30002` (local Minikube address).
-- **Grafana Dashboard**: Access it at `http://192.168.49.2:30000` (local Minikube address).
+- **Grafana**: Access it at `http://192.168.49.2:30000` (local Minikube address).
   - Login using `admin` as the username and `prom-operator` as the password.
-- **Prometheus**: Access it at `http://192.168.49.2:30090` (local Minikube address).
+- **Grafana imported dashboard**: Access it at `http://192.168.49.2:30000/d/aei3q9u5adj40a`
 
-4. **Testing and Autoscaling**:
+5. **Testing and Autoscaling**:
 
 - To simulate load on the backend, run the following command in a terminal:
   ```
@@ -105,7 +102,7 @@ After running the script, the services will be exposed and you can access them v
   ```
 - You can also monitor the **Grafana dashboard** for autoscaling data or use the Minikube dashboard.
 
-5. **Grafana Dashboard**:
+6. **Grafana Dashboard**:
 
 After importing the dashboard JSON file (`projet-grafana-dashboard.json`), the dashboard will display:
 - Active resources per pod
@@ -115,17 +112,10 @@ After importing the dashboard JSON file (`projet-grafana-dashboard.json`), the d
 
 You can monitor these metrics in real-time using Grafana.
 
-6. **Important Notes**:
-
-- The script assumes **kubectl**, **Minikube** and **Docker** are already installed and accessible.
-- The script also assumes you have the necessary permissions to install Helm charts and deploy resources in Kubernetes.
-- A `cleanCluster.sh` script is provided to clean up the cluster if needed.
-- Running the automation script on a VM or machine without graphical access (headless) will cause the script to fail at the end when attempting to open the frontend web page in a browser. The commands to open the web page are designed for machines with a GUI, and they will not work in a headless environment.
-
 ---
 
 ## Conclusion
 
-This script automates the entire process of deploying an application with autoscaling, monitoring with Prometheus and Grafana, and setting up an environment using Minikube and Kubernetes. You can easily customize it to fit specific requirements or environments.
+This project automates the entire process of deploying an application with autoscaling, monitoring with Prometheus and Grafana, and setting up an environment using Minikube and Kubernetes. You can easily customize it to fit specific requirements or environments.
 
 For further questions or customizations, refer to the Kubernetes, Helm, Prometheus, and Grafana documentation.
