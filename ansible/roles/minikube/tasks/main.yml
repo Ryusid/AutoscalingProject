@@ -1,7 +1,7 @@
 ---
 - name: Start Minikube
   become: false
-  command: minikube start
+  command: minikube start --driver=docker
   register: minikube_start
   changed_when: "'Done!' in minikube_start.stdout"
 

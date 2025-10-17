@@ -71,7 +71,7 @@
   register: helm_check
   ignore_errors: yes
 
-- name: ⚙️nstall Helm if not found
+- name: ⚙️install Helm if not found
   become: true
   shell: |
     curl -fsSL https://get.helm.sh/helm-{{ helm_version }}-linux-amd64.tar.gz -o helm.tar.gz
@@ -90,8 +90,8 @@
   when: docker_perm.rc != 0
   debug:
     msg: |
-      ⚠️ocker seems inaccessible for user {{ ansible_user }}.
+      ⚠️docker seems inaccessible for user $USER.
       Run:
-        sudo usermod -aG docker {{ ansible_user }}
+        sudo usermod -aG docker $USER
         newgrp docker
       Then re-run this playbook.

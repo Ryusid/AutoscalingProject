@@ -9,4 +9,5 @@
     - role: minikube
     - role: deploy
       become: false
-    #- role: monitoring
+    - role: monitoring
+      become: false

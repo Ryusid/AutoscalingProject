@@ -34,3 +34,19 @@
         }]
       }
     }'
+
+- name: Rollout the monitoring stack
+  become: false
+  shell: |
+    kubectl rollout status deployment/prometheus-grafana -n monitoring
+    kubectl rollout status deployment/prometheus-kube-prometheus-operator -n monitoring
+
+- name: Importing dashboard to Grafana
+  become: false
+  shell: |
+    curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" \
+    -d @projet-grafana-dashboard.json \
+    'http://admin:prom-operator@192.168.49.2:30000/api/dashboards/import'
+  args:
+    chdir: "{{ playbook_dir }}/../"
+
