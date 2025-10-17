@@ -25,7 +25,7 @@ The following dependencies are needed for the project, though most of them are c
 
        - https://helm.sh/docs/intro/install/
 4. **Docker**: to run minikube with the docker driver:
-    - **https://docs.docker.com/engine/install/ubuntu/**
+    - **https://docs.docker.com/engine/install/**
 5. **Ansible**: to automate this full project.
 ---
 ### User Permissions
@@ -64,7 +64,7 @@ ansible-playbook -i ansible/inventory.ini ansible/playbook.yml --ask-become-pass
 ```
  This will automatically:
 
- - Ensures dependencies (Docker, kubectl, Helm, Minikube)
+ - Ensures dependencies (kubectl, Helm, Minikube)
  - Start **Minikube** (if not already started).
  - Enable the **metrics-server**.
  - Deploy the Redis master and replicas, backend, and frontend React app.

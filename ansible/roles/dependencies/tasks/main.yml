@@ -24,11 +24,9 @@
   register: docker_check
   ignore_errors: yes
 
-
-- name: Install docker if not present
-  become: true
-  shell:
-    curl -fsSL https://get.docker.com | bash
+- name: Fail if docker doesn't exist
+  fail:
+    msg: You need to install docker before running this playbook, see 'https://docs.docker/com/engine/install'
   when: docker_check.rc != 0
 
 # Kubectl installation
@@ -71,7 +69,7 @@
   register: helm_check
   ignore_errors: yes
 
-- name: ⚙️install Helm if not found
+- name: install Helm if not found
   become: true
   shell: |
     curl -fsSL https://get.helm.sh/helm-{{ helm_version }}-linux-amd64.tar.gz -o helm.tar.gz
@@ -79,19 +77,3 @@
     mv linux-amd64/helm /usr/local/bin/helm
     rm -rf linux-amd64 helm.tar.gz
   when: helm_check.rc != 0
-
-- name: Check docker permissions
-  become: false
-  command: docker ps
-  register: docker_perm
-  ignore_errors: yes
-
-- name: Warn if docker not accessible
-  when: docker_perm.rc != 0
-  debug:
-    msg: |
-      ⚠️docker seems inaccessible for user $USER.
-      Run:
-        sudo usermod -aG docker $USER
-        newgrp docker
-      Then re-run this playbook.
