@@ -1,21 +1,21 @@
 ---
 - name: Apply Redis master
-  command: kubectl apply -f Redis-master.yml
+  command: kubectl apply -f resources/redis/Redis-master.yml
   args:
     chdir: "{{ playbook_dir }}/../"
 
 - name: Apply Redis replicas
-  command: kubectl apply -f Redis-replicas.yml
+  command: kubectl apply -f resources/redis/Redis-replicas.yml
   args:
     chdir: "{{ playbook_dir }}/../"
 
 - name: Apply backend deployment
-  command: kubectl apply -f BackendDep.yml
+  command: kubectl apply -f resources/backend/BackendDep.yml
   args:
     chdir: "{{ playbook_dir }}/../"
 
 - name: Apply frontend deployment
-  command: kubectl apply -f ReactDep.yml
+  command: kubectl apply -f resources/frontend/ReactDep.yml
   args:
     chdir: "{{ playbook_dir }}/../"
 

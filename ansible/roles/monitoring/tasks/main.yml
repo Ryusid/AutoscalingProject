@@ -16,7 +16,7 @@
 
 - name: Apply ServiceMonitor
   become: false
-  command: kubectl apply -f Service-monitoring.yml
+  command: kubectl apply -f resources/monitoring/Service-monitoring.yml
   args:
     chdir: "{{ playbook_dir }}/../"
 
@@ -45,7 +45,7 @@
   become: false
   shell: |
     curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" \
-    -d @projet-grafana-dashboard.json \
+    -d @dashboards/projet-grafana-dashboard.json \
     'http://admin:prom-operator@192.168.49.2:30000/api/dashboards/import'
   args:
     chdir: "{{ playbook_dir }}/../"

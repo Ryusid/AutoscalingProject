@@ -7,7 +7,7 @@ The deployment is fully reproducible through Ansible roles.
 
 
 The end result is represented by the following picture : 
-![architecture](Architecture.png)
+![architecture](images/Architecture.png)
 
 ## Prerequisites
 
